@@ -7,13 +7,16 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
 export async function fetchHandoverReport(
   workspaceType: string,
 ): Promise<HandoverReport> {
+  // Select the correct mock dataset for fallbacks
+  const isStudentClub =
+    workspaceType.toLowerCase().includes("student") ||
+    workspaceType.toLowerCase().includes("club");
+  const baseData = isStudentClub
+    ? MOCK_STUDENT_HANDOVER_DATA
+    : MOCK_HANDOVER_DATA;
+
   try {
-    // Map workspace choice to Sibasish's seeded database member IDs
-    const departingId =
-      workspaceType.toLowerCase().includes("student") ||
-      workspaceType.toLowerCase().includes("club")
-        ? "Aarav Sharma"
-        : "Alex Vance";
+    const departingId = isStudentClub ? "Aarav Sharma" : "Alex Vance";
 
     const response = await fetch(`${BACKEND_URL}/api/v1/generate-handover`, {
       method: "POST",
@@ -31,25 +34,22 @@ export async function fetchHandoverReport(
     }
 
     const result = await response.json();
-    // Handles Sibasish's {"status": "success", "data": report} response structure
-    const data: HandoverReport = result.data || result;
+    const data = result.data || result;
+
+    // Merge backend response with base mock data so claims and reviews are populated
     return {
-      ...data,
+      ...baseData, // Provides default claims, incoming_member, admin_review
+      ...data, // Overwrites with live backend tasks, summary, & responsibilities
       workspace_type: workspaceType,
+      claims: data.claims || baseData.claims,
+      admin_review: data.admin_review || baseData.admin_review,
+      incoming_member: data.incoming_member || baseData.incoming_member,
     };
   } catch (error) {
     console.warn(
       "Backend API unreachable. Falling back to tailored demo mock data:",
       error,
     );
-
-    // Select the correct mock dataset based on the user's workspace choice
-    const isStudentClub =
-      workspaceType.toLowerCase().includes("student") ||
-      workspaceType.toLowerCase().includes("club");
-    const baseData = isStudentClub
-      ? MOCK_STUDENT_HANDOVER_DATA
-      : MOCK_HANDOVER_DATA;
 
     return {
       ...baseData,
