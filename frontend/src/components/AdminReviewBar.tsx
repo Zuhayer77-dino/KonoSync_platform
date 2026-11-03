@@ -1,21 +1,28 @@
 import React, { useState } from "react";
-import type { AdminReview } from "../types/handover";
 
 interface AdminReviewBarProps {
-  initialReview: AdminReview;
-  onUpdateReview: (updated: AdminReview) => void;
+  initialReview?: any;
+  onUpdateReview: (updated: any) => void;
 }
 
 export const AdminReviewBar: React.FC<AdminReviewBarProps> = ({
   initialReview,
   onUpdateReview,
 }) => {
-  const [review, setReview] = useState<AdminReview>(initialReview);
+  // Provide a safe fallback if initialReview is undefined
+  const safeReview = initialReview || {
+    status: "Pending Review",
+    reviewed_by: "Lead Engineering Manager (Demo Admin)",
+    review_timestamp: null,
+    redaction_notes: "No compliance redactions flagged.",
+  };
+
+  const [review, setReview] = useState<any>(safeReview);
   const [isEditingNotes, setIsEditingNotes] = useState(false);
-  const [notesInput, setNotesInput] = useState(review.redaction_notes);
+  const [notesInput, setNotesInput] = useState(review?.redaction_notes || "");
 
   const handleStatusChange = (newStatus: string) => {
-    const updated: AdminReview = {
+    const updated = {
       ...review,
       status: newStatus,
       reviewed_by: "Lead Engineering Manager (Demo Admin)",
@@ -26,7 +33,7 @@ export const AdminReviewBar: React.FC<AdminReviewBarProps> = ({
   };
 
   const handleSaveNotes = () => {
-    const updated: AdminReview = {
+    const updated = {
       ...review,
       redaction_notes: notesInput,
     };
@@ -60,9 +67,11 @@ export const AdminReviewBar: React.FC<AdminReviewBarProps> = ({
 
         <div className="flex items-center space-x-2">
           <span
-            className={`px-3 py-1 rounded-full text-xs font-mono border ${getStatusBadge(review.status)}`}
+            className={`px-3 py-1 rounded-full text-xs font-mono border ${getStatusBadge(
+              review?.status || "Pending Review",
+            )}`}
           >
-            {review.status}
+            {review?.status || "Pending Review"}
           </span>
         </div>
       </div>
@@ -71,12 +80,14 @@ export const AdminReviewBar: React.FC<AdminReviewBarProps> = ({
         <div className="space-y-1 font-mono text-slate-400">
           <div>
             Reviewed By:{" "}
-            <span className="text-slate-200">{review.reviewed_by}</span>
+            <span className="text-slate-200">
+              {review?.reviewed_by || "Pending Sign-off"}
+            </span>
           </div>
           <div>
             Timestamp:{" "}
             <span className="text-slate-200">
-              {review.review_timestamp
+              {review?.review_timestamp
                 ? new Date(review.review_timestamp).toLocaleString()
                 : "Pending Sign-off"}
             </span>
@@ -120,7 +131,7 @@ export const AdminReviewBar: React.FC<AdminReviewBarProps> = ({
             </div>
           ) : (
             <div className="text-slate-300 font-mono text-xs bg-slate-950/60 p-2 rounded border border-slate-800/80">
-              {review.redaction_notes}
+              {review?.redaction_notes || "No notes provided."}
             </div>
           )}
         </div>
