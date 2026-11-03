@@ -67,7 +67,7 @@ export default function App() {
 
             {/* Admin Review & Approval Bar */}
             <AdminReviewBar
-              initialReview={reportData.admin_review}
+              initialReview={reportData?.admin_review}
               onUpdateReview={(updatedReview) => {
                 setReportData({ ...reportData, admin_review: updatedReview });
               }}
@@ -79,7 +79,7 @@ export default function App() {
                 <h3 className="text-sm font-semibold tracking-tight text-white flex items-center space-x-2">
                   <span>Verifiable Claims</span>
                   <span className="px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-mono text-slate-400">
-                    {reportData.claims.length}
+                    {reportData?.claims?.length || 0}
                   </span>
                 </h3>
                 <span className="text-xs text-slate-400 font-mono">
@@ -88,7 +88,7 @@ export default function App() {
               </div>
 
               <div className="space-y-3">
-                {reportData.claims.map((claim) => (
+                {(reportData?.claims || []).map((claim) => (
                   <ClaimCard key={claim.id} claim={claim} />
                 ))}
               </div>
