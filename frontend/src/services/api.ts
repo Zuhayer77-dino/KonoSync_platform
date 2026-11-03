@@ -7,7 +7,6 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
 export async function fetchHandoverReport(
   workspaceType: string,
 ): Promise<HandoverReport> {
-  // Select the correct mock dataset for fallbacks
   const isStudentClub =
     workspaceType.toLowerCase().includes("student") ||
     workspaceType.toLowerCase().includes("club");
@@ -36,14 +35,15 @@ export async function fetchHandoverReport(
     const result = await response.json();
     const data = result.data || result;
 
-    // Merge backend response with base mock data so claims and reviews are populated
+    // Merge backend data with mock data so claims, incoming member, and admin reviews are fully populated
     return {
-      ...baseData, // Provides default claims, incoming_member, admin_review
-      ...data, // Overwrites with live backend tasks, summary, & responsibilities
+      ...baseData,
+      ...data,
       workspace_type: workspaceType,
-      claims: data.claims || baseData.claims,
-      admin_review: data.admin_review || baseData.admin_review,
+      claims:
+        data.claims && data.claims.length > 0 ? data.claims : baseData.claims,
       incoming_member: data.incoming_member || baseData.incoming_member,
+      admin_review: data.admin_review || baseData.admin_review,
     };
   } catch (error) {
     console.warn(
