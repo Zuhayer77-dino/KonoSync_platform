@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 interface ExecutiveSummaryCardProps {
-  report: any; // Typed as any to instantly clear TypeScript mismatches for the hackathon
+  report: any;
 }
 
 export const ExecutiveSummaryCard: React.FC<ExecutiveSummaryCardProps> = ({
@@ -9,11 +9,19 @@ export const ExecutiveSummaryCard: React.FC<ExecutiveSummaryCardProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
+  // Safe extraction for departing member (handles strings or objects)
   const departingName =
     typeof report?.departing_member === "object" &&
     report?.departing_member !== null
-      ? report.departing_member.name
-      : report?.departing_member || "Team Member";
+      ? report.departing_member?.name || "Team Member"
+      : report?.departing_member || "Alex Vance";
+
+  // Safe extraction for incoming member
+  const incomingName =
+    typeof report?.incoming_member === "object" &&
+    report?.incoming_member !== null
+      ? report.incoming_member?.name || "Incoming Member"
+      : report?.incoming_member || "Incoming Member";
 
   const executiveSummaryText =
     report?.executive_summary ||
@@ -26,6 +34,8 @@ export const ExecutiveSummaryCard: React.FC<ExecutiveSummaryCardProps> = ({
 ${report?.workspace_type || "N/A"}
 - **Departing Member:** 
 ${departingName}
+- **Incoming Member:** 
+${incomingName}
 
 ## Executive Summary
 ${executiveSummaryText}
@@ -86,8 +96,13 @@ ${(report?.active_tasks || [])
           </h2>
           <div className="flex items-center space-x-2 text-xs text-slate-400 font-mono mt-1">
             <span>
-              Departing Member:{" "}
+              Departing:{" "}
               <strong className="text-slate-200">{departingName}</strong>
+            </span>
+            <span>•</span>
+            <span>
+              Incoming:{" "}
+              <strong className="text-slate-200">{incomingName}</strong>
             </span>
           </div>
         </div>
