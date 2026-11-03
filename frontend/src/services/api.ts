@@ -8,20 +8,35 @@ export async function fetchHandoverReport(
   workspaceType: string,
 ): Promise<HandoverReport> {
   try {
-    const response = await fetch(`${BACKEND_URL}/generate-handover`, {
+    // Map workspace choice to Sibasish's seeded database member IDs
+    const departingId =
+      workspaceType.toLowerCase().includes("student") ||
+      workspaceType.toLowerCase().includes("club")
+        ? "Aarav Sharma"
+        : "Alex Vance";
+
+    const response = await fetch(`${BACKEND_URL}/api/v1/generate-handover`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ workspace_type: workspaceType }),
+      body: JSON.stringify({
+        departing_member_id: departingId,
+        target_role: workspaceType,
+      }),
     });
 
     if (!response.ok) {
       throw new Error("Backend service unavailable");
     }
 
-    const data: HandoverReport = await response.json();
-    return data;
+    const result = await response.json();
+    // Handles Sibasish's {"status": "success", "data": report} response structure
+    const data: HandoverReport = result.data || result;
+    return {
+      ...data,
+      workspace_type: workspaceType,
+    };
   } catch (error) {
     console.warn(
       "Backend API unreachable. Falling back to tailored demo mock data:",
