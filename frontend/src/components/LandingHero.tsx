@@ -1,99 +1,108 @@
 import React, { useState } from "react";
 
 interface LandingHeroProps {
-  onEnterWorkspace: (workspaceType: string) => void;
+  onSelectWorkspace: (type: string) => void;
 }
 
 export const LandingHero: React.FC<LandingHeroProps> = ({
-  onEnterWorkspace,
+  onSelectWorkspace,
 }) => {
-  const [selectedWorkspace, setSelectedWorkspace] = useState(
+  const [selectedType, setSelectedType] = useState<string>(
     "Corporate Engineering",
   );
 
   const workspaces = [
     {
+      id: "Corporate Engineering",
       title: "Corporate Engineering",
-      desc: "For enterprise teams, backend migrations, and compliance handovers.",
+      desc: "Jira tasks, GitHub PRs, and DB scaling handovers.",
       badge: "Enterprise Secure",
     },
     {
+      id: "Student Tech Club",
       title: "Student Tech Club",
-      desc: "For university hackathons, open-source maintainers, and club transitions.",
+      desc: "Discord logs, repo handoffs, and event archives.",
       badge: "Community Fast-Track",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center px-4 py-12">
-      <div className="max-w-4xl w-full text-center space-y-8">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center px-4 py-6">
+      <div className="max-w-2xl w-full text-center space-y-5">
         {/* Top Branding Badge */}
-        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-medium">
-          <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
-          <span>
-            KonoSync v1.0-alpha • Zero-Hallucination Handover Platform
+        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800">
+          <span className="w-2 h-2 rounded-full bg-slate-400"></span>
+          <span className="text-xs font-mono text-slate-300">
+            KonoSync • Evidence-Linked Handover Platform
           </span>
         </div>
 
-        {/* Main Header */}
-        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white">
-          Seamless Knowledge Transfer <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
-            Without the Chaos.
-          </span>
-        </h1>
+        {/* Main Headline */}
+        <div className="space-y-1.5">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
+            Seamless Knowledge Transfer
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">
+            Reconstruct activity logs and task threads into verifiable,
+            citation-backed handover reports instantly.
+          </p>
+        </div>
 
-        <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-          Reconstruct project activity logs, git commits, and task threads into
-          verifiable, citation-backed handover reports instantly.
-        </p>
-
-        {/* Workspace Selector Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto pt-6">
+        {/* Workspace Mode Selection Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
           {workspaces.map((ws) => {
-            const isSelected = selectedWorkspace === ws.title;
+            const isSelected = selectedType === ws.title;
             return (
               <div
-                key={ws.title}
-                onClick={() => setSelectedWorkspace(ws.title)}
-                className={`cursor-pointer text-left p-6 rounded-xl border transition-all duration-200 ${
+                key={ws.id}
+                onClick={() => setSelectedType(ws.title)}
+                className={`cursor-pointer rounded-xl p-4 border transition-all flex flex-col justify-between ${
                   isSelected
-                    ? "bg-indigo-950/40 border-indigo-500 shadow-lg shadow-indigo-500/10"
-                    : "bg-slate-900/50 border-slate-800 hover:border-slate-700"
+                    ? "bg-slate-900 border-slate-600 ring-1 ring-slate-600 shadow-sm"
+                    : "bg-slate-900/40 border-slate-800 hover:border-slate-700"
                 }`}
               >
-                <div className="flex justify-between items-center mb-3">
-                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded bg-slate-800 text-indigo-300">
-                    {ws.badge}
-                  </span>
-                  <div
-                    className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                      isSelected
-                        ? "border-indigo-400 bg-indigo-400"
-                        : "border-slate-600"
-                    }`}
-                  >
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                      {ws.badge}
+                    </span>
                     {isSelected && (
-                      <div className="w-1.5 h-1.5 rounded-full bg-slate-950" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
                     )}
                   </div>
+                  <h3 className="text-sm font-semibold text-white">
+                    {ws.title}
+                  </h3>
+                  <p className="text-xs text-slate-400 leading-snug">
+                    {ws.desc}
+                  </p>
                 </div>
-                <h3 className="text-lg font-bold text-white mb-1">
-                  {ws.title}
-                </h3>
-                <p className="text-sm text-slate-400">{ws.desc}</p>
               </div>
             );
           })}
         </div>
 
-        {/* Enter Dashboard Button */}
-        <div className="pt-4">
+        {/* Action Button */}
+        <div>
           <button
-            onClick={() => onEnterWorkspace(selectedWorkspace)}
-            className="px-8 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-all shadow-lg shadow-indigo-600/20 active:scale-95"
+            onClick={() => onSelectWorkspace(selectedType)}
+            className="px-6 py-2.5 rounded-xl bg-slate-100 hover:bg-white text-slate-950 font-semibold text-xs sm:text-sm shadow-sm transition-all inline-flex items-center space-x-2"
           >
-            Enter {selectedWorkspace} Dashboard →
+            <span>Start Handover with {selectedType}</span>
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              />
+            </svg>
           </button>
         </div>
       </div>

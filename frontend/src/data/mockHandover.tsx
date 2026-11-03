@@ -1,45 +1,45 @@
-import { HandoverReport } from "../types/handover";
+import type { HandoverReport } from "../types/handover";
 
 export const MOCK_HANDOVER_DATA: HandoverReport = {
-  project_id: "proj_konosync_01",
+  project_id: "PROJ-KONO-01",
   workspace_type: "Corporate Engineering",
-  generated_at: "2026-10-24T14:30:00Z",
+  generated_at: "2026-11-03T18:00:00Z",
   departing_member: {
     name: "Alex Vance",
     role: "Senior Backend Engineer",
     email: "alex.vance@company.com",
+    skill_level: "Senior",
   },
   incoming_member: {
-    name: "Mohammed Zuhayer Labeeb",
+    name: "Jordan Lee",
     role: "Full-Stack Engineer",
-    skill_level: "Intermediate",
+    email: "jordan.lee@company.com",
+    skill_level: "Mid-Level",
   },
   handover_summary:
-    "Successfully migrated core database connection pooling from pgBouncer to direct Prisma configuration, reducing connection latency by 42%. Pending work includes resolving N+1 query bottlenecks in the metrics analytics service.",
+    "Comprehensive technical handover covering core backend architecture, active database connection strategies, and ongoing service bottlenecks.\n\n" +
+    "• Architectural State: Successfully migrated primary user database connection handling to direct Prisma client configurations, standardizing socket behavior and mitigating connection drops under peak concurrency.\n" +
+    "• Active Blockers: Priority focus must be directed toward resolving N+1 query latency spikes in the metrics analytics API (/api/v1/metrics), which currently exceeds 2400ms trace thresholds.\n" +
+    "• Operational Risks: Review conflicting timelines between legacy Redis cache TTL updates and incoming token rotation policies before the next release cycle.",
   claims: [
     {
       id: "claim_01",
       category: "Architectural Decision",
       statement:
-        "Migrated primary user database connection pooling from pgBouncer to direct Prisma client configuration to prevent stale socket errors under load.",
+        "Migrated primary user database connection pooling to direct Prisma client configuration to manage socket errors under load.",
       status: "Completed",
-      priority: "High",
+      priority: "High priority",
+      verification_state: "uncertain",
+      verification_note:
+        "pgBouncer removal not explicitly stated in cited configuration sources.",
       citations: [
         {
-          source_type: "GitHub Commit",
-          reference_id: "commit_a8f92c1",
-          title: "Refactor database client configuration",
-          url: "https://github.com/org/repo/commit/a8f92c1",
+          source_type: "GitHub PR",
+          reference_id: "PR #142",
+          title: "Refactor DB Pool",
+          url: "https://github.com/example/repo/pull/142",
           snippet:
-            "const prisma = new PrismaClient({ datasources: { db: { url: process.env.DIRECT_URL } } });",
-        },
-        {
-          source_type: "Slack Thread",
-          reference_id: "thread_991",
-          title: "#backend-infra decision discussion",
-          url: "https://slack.com/archives/C01/p991",
-          snippet:
-            "Alex Vance: Bouncer is dropping packets during traffic spikes. Moving to direct Prisma URL.",
+            "Refactored db connection pool initialization in prisma.config.ts",
         },
       ],
     },
@@ -49,24 +49,56 @@ export const MOCK_HANDOVER_DATA: HandoverReport = {
       statement:
         "Analytics API route /api/v1/metrics suffers from N+1 query latency spikes and requires batch-fetching optimization.",
       status: "Pending",
-      priority: "High",
+      priority: "High priority",
+      verification_state: "verified",
       citations: [
         {
-          source_type: "Jira Task",
-          reference_id: "JIRA-402",
-          title: "Optimize dashboard query execution time",
-          url: "https://jira.company.com/browse/JIRA-402",
+          source_type: "Datadog APM",
+          reference_id: "TRACE-992",
+          title: "Metrics Latency Spike",
+          url: "https://app.datadoghq.com/apm/trace/TRACE-992",
           snippet:
-            "Status: In Progress. Assigned to Alex. Blocker: Prisma relation loading fetches rows sequentially in loop.",
+            "Trace duration exceeded 2400ms on /api/v1/metrics endpoint.",
         },
       ],
     },
+    {
+      id: "claim_03",
+      category: "Risk",
+      statement:
+        "Legacy Redis cache expiration policies conflict with newly deployed token rotation intervals.",
+      status: "In Progress",
+      priority: "Medium priority",
+      verification_state: "conflicting",
+      verification_note:
+        "Slack channel logs contradict Redis configuration timeline.",
+      citations: [
+        {
+          source_type: "Slack Thread",
+          reference_id: "#eng-backend",
+          title: "Cache TTL Discussion",
+          url: "https://slack.com/archives/C01234567/p1729123456",
+          snippet: "We postponed the Redis TTL update until next sprint.",
+        },
+      ],
+    },
+    {
+      id: "claim_04",
+      category: "Unfinished Work",
+      statement:
+        "Environment secret rotation documentation pending final security team sign-off.",
+      status: "Pending",
+      priority: "Low priority",
+      verification_state: "missing_evidence",
+      verification_note:
+        "No linked Confluence page or Jira ticket found in activity feed.",
+      citations: [],
+    },
   ],
   admin_review: {
-    status: "Approved",
-    reviewed_by: "Sarah Jenkins (Engineering Manager)",
-    review_timestamp: "2026-10-24T16:00:00Z",
-    redaction_notes:
-      "All internal AWS secrets have been successfully redacted from commit references.",
+    status: "Pending Review",
+    reviewed_by: "Unassigned",
+    review_timestamp: null,
+    redaction_notes: "None",
   },
 };

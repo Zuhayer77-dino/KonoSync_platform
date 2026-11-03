@@ -1,36 +1,44 @@
-import { HandoverReport } from "../types/handover";
+import type { HandoverReport } from "../types/handover";
 import { MOCK_HANDOVER_DATA } from "../data/mockHandover";
+import { MOCK_STUDENT_HANDOVER_DATA } from "../data/studentMockHandover";
 
-const API_BASE_URL = "http://localhost:8000/api/v1";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
 
 export async function fetchHandoverReport(
-  departingMemberId: string = "Alex Vance",
-  targetRole: string = "Full-Stack Engineer",
+  workspaceType: string,
 ): Promise<HandoverReport> {
   try {
-    const response = await fetch(`${API_BASE_URL}/generate-handover`, {
+    const response = await fetch(`${BACKEND_URL}/generate-handover`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        departing_member_id: departingMemberId,
-        target_role: targetRole,
-      }),
+      body: JSON.stringify({ workspace_type: workspaceType }),
     });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch from backend server");
+      throw new Error("Backend service unavailable");
     }
 
-    const result = await response.json();
-    // Matches Sibasish's return format: { status: "success", data: report }
-    return result.data;
+    const data: HandoverReport = await response.json();
+    return data;
   } catch (error) {
     console.warn(
-      "Backend server offline or unreachable. Falling back to local mock data.",
+      "Backend API unreachable. Falling back to tailored demo mock data:",
       error,
     );
-    return MOCK_HANDOVER_DATA;
+
+    // Select the correct mock dataset based on the user's workspace choice
+    const isStudentClub =
+      workspaceType.toLowerCase().includes("student") ||
+      workspaceType.toLowerCase().includes("club");
+    const baseData = isStudentClub
+      ? MOCK_STUDENT_HANDOVER_DATA
+      : MOCK_HANDOVER_DATA;
+
+    return {
+      ...baseData,
+      workspace_type: workspaceType,
+    };
   }
 }

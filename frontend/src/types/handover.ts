@@ -13,12 +13,20 @@ export interface Citation {
   snippet: string;
 }
 
+export type VerificationState =
+  | "verified"
+  | "uncertain"
+  | "conflicting"
+  | "missing_evidence";
+
 export interface Claim {
   id: string;
   category: string;
   statement: string;
   status: string;
   priority: string;
+  verification_state: VerificationState;
+  verification_note?: string;
   citations: Citation[];
 }
 
