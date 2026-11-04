@@ -13,7 +13,7 @@ KonoSync uses a decoupled client-server architecture designed for reliability du
 3. **Defensive UI Rendering & Type Safety:** 
    Components utilize optional chaining (`?.`), nullish coalescing, and safe array checks (`|| []`) to handle varying JSON payloads without triggering white-screen errors. Strict TypeScript checks are safely bypassed where necessary to ensure reliable Vercel builds.
 
-Core Features
+ ## Core Features
 -Dynamic Report Synthesis: Fetches role-specific summaries and active task items via the backend API.
 -Multi-Workspace Support: Adapts contexts between corporate engineering and student organization environments.
 -Verifiable Claims Engine: Renders evidence-backed claims with status indicators and source citations.
@@ -21,12 +21,25 @@ Core Features
 -Export Suite: One-click options to copy Markdown to the clipboard, download raw .md files, or export structured JSON schemas.
 -Zero-Downtime Fallback: Built-in client-side data merging ensures the application remains fully functional during network disruptions.
 
+ ## Tech Stack
+-Frontend: React, TypeScript, Vite, Tailwind CSS (Deployed on Vercel)
+-Backend: REST API service (Deployed on Render)
+-Tooling: Git, ESLint, PostCSS
+
 ## File Planning & Directory Structure
 
 The project is structured into a decoupled frontend and backend layout:
 
 ```text
 konosync/
+├── .vscode/
+├── backend/
+│   ├── .gitkeep
+│   ├── impt.txt
+│   ├── main.py                  # API entry point & route handlers
+│   ├── rag_engine.py            # RAG & summary generation logic
+│   ├── requirements.txt         # Python package dependencies
+│   └── seed_data.py             # Database seeding & mock records
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
@@ -44,4 +57,5 @@ konosync/
 │   │   └── main.tsx                      # Application entry point
 │   ├── package.json
 │   └── vite.config.ts
+├── .gitignore
 └── README.md
